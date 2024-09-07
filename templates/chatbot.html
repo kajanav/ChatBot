@@ -2,10 +2,7 @@
 
 {% block styles %}
 <style>
-    body, html {
-      height: 100%;
-    }
-
+   
     .messages-box {
       flex: 1;
       overflow-y: auto;
@@ -35,16 +32,7 @@
       align-self: flex-start;
     }
 
-    .message-form {
-      display: flex;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 10px;
-      background-color: #f8f9fa;
-    }
-
+    
     .message-input {
       flex: 1;
       border-radius: 0;
@@ -65,9 +53,10 @@
 
 
 {% block content %}
-<div class="chat-container">
+<div class="container mt-5 bg-light p-4 rounded shadow-sm">
+<div class="chat-container ">
   <div class="card flex-grow-1">
-    <div class="card-header bg-primary text-white">Chat</div>
+    <div class="card-header bg-success text-white">Welcome!</div>
     
 
     <div class="card-body messages-box">
@@ -125,10 +114,11 @@
     <div class="input-group">
       <input type="text" class="form-control message-input" placeholder="Type your message...">
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">Send</button>
+        <button type="submit" class="btn btn-success mb1 bg-green btn-send">Send</button>
       </div>
     </div>
   </form>
+</div>
 </div>
 
 <script>
