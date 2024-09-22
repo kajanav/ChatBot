@@ -1,41 +1,53 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-import openai
-import os
 from django.contrib.auth.models import AnonymousUser
 from .models import Chat
 from django.utils import timezone
 from groq import Groq
+import os
 
-openai_api_key = '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'
-openai.api_key = openai_api_key
+# Load the Groq API key from environment variables
+groq_api_key = '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'
 
-def ask_openai(message):
-    response = openai.ChatCompletion.create(
-        model = "gpt-4",
+# Instantiate the Groq client with the API key
+client = Groq(api_key=groq_api_key)
+
+def ask_groq(message):
+ try:
+    # Create a completion using the Groq API9+ooy   
+    completion = client.chat.completions.create(
+        model="llama3-8b-8192",
         messages=[
-            {"role": "system", "content": "You are an helpful assistant."},
+            {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": message},
-        ]
+        ],
+        temperature=1,
+        max_tokens=1024,
+        top_p=1,
+        stream=True,
+        stop=None,
     )
-    
-    answer = response.choices[0].message.content.strip()
-    return answer
+
+    # Collect the streamed response
+    response_text = ""
+    for chunk in completion:
+        response_text += chunk.choices[0].delta.content or ""
+    print("AI Response: ", response_text)
+    return response_text
+ 
+
+ except Exception as e:
+        print(f"Error in ask_groq: {e}")
+        return "Error in generating response"
 
 def chatbot(request):
-    if isinstance(request.user, AnonymousUser):
-        chats = Chat.objects.none()
-    else:
-        chats = Chat.objects.filter(user=request.user)
-
+    
     if request.method == 'POST':
         message = request.POST.get('message')
-        response = ask_openai(message)
+        response = ask_groq(message)
 
-        # Save the chat interaction in the database
-        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
-        chat.save()
+        
 
         return JsonResponse({'message': message, 'response': response})
 
-    return render(request, 'chatbot.html', {'chats': chats})
+    return render(request, 'chatbot.html')
